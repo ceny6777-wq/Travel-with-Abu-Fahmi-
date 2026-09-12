@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel with Abu-Fahmi — Private Tours</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
+        body { background-color: #f4f7f6; color: #2c3e50; line-height: 1.6; }
+        
+        header { background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); color: white; text-align: center; padding: 40px 20px 60px 20px; }
+        header h1 { font-size: 2.2rem; margin-bottom: 5px; }
+        
+        .container { max-width: 650px; margin: -40px auto 50px auto; padding: 0 20px; }
+        .card { background: white; border-radius: 16px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
+
+        .section-title { font-size: 1.2rem; margin-bottom: 15px; color: #0f172a; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; margin-top: 20px; }
+        .section-title:first-child { margin-top: 0; }
+
+        /* Выбор машины */
+        .car-selector { display: flex; gap: 15px; margin-bottom: 25px; }
+        .car-card {
+            flex: 1; border: 2px solid #cbd5e1; border-radius: 12px; padding: 15px; text-align: center;
+            cursor: pointer; transition: 0.2s; background: #f8fafc;
+        }
+        .car-card i { font-size: 2rem; color: #64748b; margin-bottom: 8px; display: block; }
+        .car-card h4 { font-size: 1.1rem; color: #1e293b; }
+        .car-card input { display: none; }
+        .car-card.active { border-color: #0083b0; background: #e0f2fe; }
+        .car-card.active i { color: #0083b0; }
+
+        /* Элементы опций */
+        .tour-option {
+            display: flex; justify-content: space-between; align-items: center;
+            background: #f8fafc; padding: 12px 16px; border-radius: 10px; margin-bottom: 12px; border: 1px solid #e2e8f0;
+        }
+        .tour-info h4 { font-size: 1rem; color: #1e293b; }
+        .tour-price { font-weight: bold; color: #0083b0; margin-right: 10px; display: inline-block; }
+
+        /* Счетчик */
+        .counter-box { display: flex; align-items: center; gap: 5px; }
+        .btn-counter {
+            width: 32px; height: 32px; background: #0083b0; color: white; border: none;
+            border-radius: 6px; font-weight: bold; font-size: 1.1rem; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .btn-counter:hover { background: #00668a; }
+        .counter-input {
+            width: 45px; text-align: center; padding: 5px; border-radius: 6px;
+            border: 1px solid #cbd5e1; font-weight: bold; font-size: 0.95rem;
+        }
+
+        .promo-section { display: flex; gap: 10px; margin: 20px 0; background: #fff8e1; padding: 12px; border-radius: 10px; border: 1px dashed #ffc107; }
+        .promo-section input { flex: 1; text-transform: uppercase; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; outline: none; }
+        .btn-apply { background: #ffb300; border: none; padding: 10px 18px; font-weight: bold; border-radius: 8px; cursor: pointer; color: #333; }
+
+        .total-box { background: #0f172a; color: white; border-radius: 12px; padding: 20px; text-align: center; margin: 20px 0; }
+        .total-price { font-size: 2.5rem; font-weight: 800; color: #38bdf8; }
+        .discount-text { color: #4ade80; font-size: 0.9rem; display: none; margin-top: 5px; }
+
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; font-weight: 600; margin-bottom: 5px; font-size: 0.9rem; }
+        .input-group input { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.95rem; outline: none; }
+
+        .btn-submit {
+            background-color: #25D366; color: white; border: none; width: 100%;
+            padding: 16px; border-radius: 12px; font-weight: bold; font-size: 1.1rem;
+            cursor: pointer; transition: 0.2s;
+        }
+        .btn-submit:hover { opacity: 0.95; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Travel with Abu-Fahmi</h1>
+        <p>Book Your Private Tour & Transfers in Azerbaijan</p>
+    </header>
+
+    <div class="container">
+        <div class="card">
+            
+            <form action="https://formspree.io/f/meaqbjqo" method="POST" id="bookingForm">
+                
+                <!-- Выбор машины -->
+                <h2 class="section-title"><i class="fa-solid fa-car"></i> Select Vehicle</h2>
+                <div class="car-selector">
+                    <label class="car-card active" id="vitoCard" onclick="selectCar('vito')">
+                        <input type="radio" name="Vehicle" value="Mercedes Vito" checked>
+                        <i class="fa-solid fa-van-shuttle"></i>
+                        <h4>Mercedes Vito</h4>
+                    </label>
+                    <label class="car-card" id="sedanCard" onclick="selectCar('sedan')">
+                        <input type="radio" name="Vehicle" value="Sedan">
+                        <i class="fa-solid fa-car-side"></i>
+                        <h4>Sedan</h4>
+                    </label>
+                </div>
+
+                <!-- Трансферы в аэропорт -->
+                <h2 class="section-title"><i class="fa-solid fa-plane"></i> Airport Transfers</h2>
+
+                <!-- Pick up -->
+                <div class="tour-option">
+                    <div class="tour-info">
+                        <h4>Airport Pick-up</h4>
+                        <span class="tour-price" id="price-pickup">$29</span>
+                    </div>
+                    <div class="counter-box">
+                        <button type="button" class="btn-counter" onclick="changeDays('pickup', -1)">−</button>
+                        <input type="number" name="Airport Pickups" id="pickup" class="counter-input tour-select" value="0" min="0" max="99" data-vito="29" data-sedan="19" oninput="validateAndCalculate(this)">
+                        <button type="button" class="btn-counter" onclick="changeDays('pickup', 1)">+</button>
+                    </div>
+                </div>
+
+                <!-- Drop off -->
+                <div class="tour-option">
+                    <div class="tour-info">
+                        <h4>Airport Drop-off</h4>
+                        <span class="tour-price" id="price-dropoff">$23</span>
+                    </div>
+                    <div class="counter-box">
+                        <button type="button" class="btn-counter" onclick="changeDays('dropoff', -1)">−</button>
+                        <input type="number" name="Airport Dropoffs" id="dropoff" class="counter-input tour-select" value="0" min="0" max="99" data-vito="23" data-sedan="24" oninput="validateAndCalculate(this)">
+                        <button type="button" class="btn-counter" onclick="changeDays('dropoff', 1)">+</button>
+                    </div>
+                </div>
+
+                <!-- Экскурсии -->
+                <h2 class="section-title"><i class="fa-solid fa-route"></i> Choose Tours</h2>
+
+                <!-- Baku -->
+                <div class="tour-option">
+                    <div class="tour-info">
+                        <h4>Baku City Tour</h4>
+                        <span class="tour-price" id="price-baku">$53 / day</span>
+                    </div>
+                    <div class="counter-box">
+                        <button type="button" class="btn-counter" onclick="changeDays('baku', -1)">−</button>
+                        <input type="number" name="Baku Days" id="baku" class="counter-input tour-select" value="0" min="0" max="99" data-vito="53" data-sedan="47" oninput="validateAndCalculate(this)">
+                        <button type="button" class="btn-counter" onclick="changeDays('baku', 1)">+</button>
+                    </div>
+                </div>
+
+                <!-- Gobustan -->
+                <div class="tour-option">
+                    <div class="tour-info">
+                        <h4>Gobustan & Mud Volcanoes</h4>
+                        <span class="tour-price" id="price-gobustan">$70 / day</span>
+                    </div>
+                    <div class="counter-box">
+                        <button type="button" class="btn-counter" onclick="changeDays('gobustan', -1)">−</button>
+                        <input type="number" name="Gobustan Days" id="gobustan" class="counter-input tour-select" value="0" min="0" max="99" data-vito="70" data-sedan="53" oninput="validateAndCalculate(this)">
+                        <button type="button" class="btn-counter" onclick="changeDays('gobustan', 1)">+</button>
+                    </div>
+                </div>
+
+                <!-- Gabala -->
+                <div class="tour-option">
+                    <div class="tour-info">
+                        <h4>Gabala Nature Tour</h4>
+                        <span class="tour-price" id="price-gabala">$112 / day</span>
+                    </div>
+                    <div class="counter-box">
+                        <button type="button" class="btn-counter" onclick="changeDays('gabala', -1)">−</button>
+                        <input type="number" name="Gabala Days" id="gabala" class="counter-input tour-select" value="0" min="0" max="99" data-vito="112" data-sedan="88" oninput="validateAndCalculate(this)">
+                        <button type="button" class="btn-counter" onclick="changeDays('gabala', 1)">+</button>
+                    </div>
+                </div>
+
+                <!-- Shahdag -->
+                <div class="tour-option">
+                    <div class="tour-info">
+                        <h4>Shahdag Mountain Tour</h4>
+                        <span class="tour-price" id="price-shahdag">$112 / day</span>
+                    </div>
+                    <div class="counter-box">
+                        <button type="button" class="btn-counter" onclick="changeDays('shahdag', -1)">−</button>
+                        <input type="number" name="Shahdag Days" id="shahdag" class="counter-input tour-select" value="0" min="0" max="99" data-vito="112" data-sedan="88" oninput="validateAndCalculate(this)">
+                        <button type="button" class="btn-counter" onclick="changeDays('shahdag', 1)">+</button>
+                    </div>
+                </div>
+
+                <!-- Guba -->
+                <div class="tour-option">
+                    <div class="tour-info">
+                        <h4>Guba Tour</h4>
+                        <span class="tour-price" id="price-guba">$100 / day</span>
+                    </div>
+                    <div class="counter-box">
+                        <button type="button" class="btn-counter" onclick="changeDays('guba', -1)">−</button>
+                        <input type="number" name="Guba Days" id="guba" class="counter-input tour-select" value="0" min="0" max="99" data-vito="100" data-sedan="82" oninput="validateAndCalculate(this)">
+                        <button type="button" class="btn-counter" onclick="changeDays('guba', 1)">+</button>
+                    </div>
+                </div>
+
+                <!-- Sheki -->
+                <div class="tour-option">
+                    <div class="tour-info">
+                        <h4>Sheki Tour</h4>
+                        <span class="tour-price" id="price-sheki">$147 / day</span>
+                    </div>
+                    <div class="counter-box">
+                        <button type="button" class="btn-counter" onclick="changeDays('sheki', -1)">−</button>
+                        <input type="number" name="Sheki Days" id="sheki" class="counter-input tour-select" value="0" min="0" max="99" data-vito="147" data-sedan="117" oninput="validateAndCalculate(this)">
+                        <button type="button" class="btn-counter" onclick="changeDays('sheki', 1)">+</button>
+                    </div>
+                </div>
+
+                <!-- Промокод -->
+                <div class="promo-section">
+                    <input type="text" id="promoCodeInput" name="Applied Promo Code" placeholder="Promo Code">
+                    <button type="button" class="btn-apply" onclick="applyPromo()">Apply</button>
+                </div>
+
+                <!-- Итог -->
+                <div class="total-box">
+                    <h3>Total Price:</h3>
+                    <div class="total-price" id="totalPriceDisplay">$0</div>
+                    <div class="discount-text" id="discountText">Promo Code Applied!</div>
+                    <input type="hidden" name="Total Price" id="hiddenTotalPrice" value="$0">
+                </div>
+
+                <!-- Данные клиента -->
+                <h2 class="section-title"><i class="fa-solid fa-user"></i> Client Details</h2>
+
+                <div class="input-group">
+                    <label>Full Name:</label>
+                    <input type="text" name="Client Name" placeholder="e.g. John Smith" required>
+                </div>
+
+                <div class="input-group">
+                    <label>WhatsApp / Phone Number:</label>
+                    <input type="tel" name="Client Phone" placeholder="+994 50 000 00 00" required>
+                </div>
+
+                <button type="submit" class="btn-submit">
+                    <i class="fa-solid fa-check-circle"></i> Confirm Booking
+                </button>
+
+            </form>
+
+        </div>
+    </div>
+
+    <script>
+        let currentCar = 'vito';
+        let discountRate = 0;
+        let usedPromoCodes = []; // Список уже использованных кодов
+
+        function selectCar(car) {
+            currentCar = car;
+            if (car === 'vito') {
+                document.getElementById('vitoCard').classList.add('active');
+                document.getElementById('sedanCard').classList.remove('active');
+            } else {
+                document.getElementById('sedanCard').classList.add('active');
+                document.getElementById('vitoCard').classList.remove('active');
+            }
+            updatePrices();
+            calculateTotal();
+        }
+
+        function updatePrices() {
+            let selects = document.querySelectorAll('.tour-select');
+            selects.forEach(select => {
+                let price = select.getAttribute(`data-${currentCar}`);
+                let priceSpan = select.parentElement.parentElement.querySelector('.tour-price');
+                
+                if (select.id === 'pickup' || select.id === 'dropoff') {
+                    priceSpan.innerText = `$${price}`;
+                } else {
+                    priceSpan.innerText = `$${price} / day`;
+                }
+            });
+        }
+
+        function changeDays(id, delta) {
+            let input = document.getElementById(id);
+            let val = parseInt(input.value) || 0;
+            val += delta;
+            if (val < 0) val = 0;
+            if (val > 99) val = 99;
+            input.value = val;
+            calculateTotal();
+        }
+
+        function validateAndCalculate(input) {
+            let val = parseInt(input.value) || 0;
+            if (val < 0) input.value = 0;
+            if (val > 99) input.value = 99;
+            calculateTotal();
+        }
+
+        function applyPromo() {
+            let code = document.getElementById('promoCodeInput').value.trim().toUpperCase();
+            let discountLabel = document.getElementById('discountText');
+
+            if (code === "") {
+                discountRate = 0;
+                discountLabel.style.display = "none";
+                calculateTotal();
+                return;
+            }
+
+            // Проверка, использовался ли код ранее
+            if (usedPromoCodes.includes(code)) {
+                alert("This promo code has already been used!");
+                return;
+            }
+
+            if (code === "ABUFAHMI") {
+                discountRate = 0.15;
+                discountLabel.innerText = "15% Promo Code Applied!";
+                discountLabel.style.display = "block";
+                usedPromoCodes.push(code);
+            } else if (code === "AZ2026") {
+                discountRate = 0.10;
+                discountLabel.innerText = "10% Promo Code Applied!";
+                discountLabel.style.display = "block";
+                usedPromoCodes.push(code);
+            } else if (code === "BAKU5") {
+                discountRate = 0.05;
+                discountLabel.innerText = "5% Promo Code Applied!";
+                discountLabel.style.display = "block";
+                usedPromoCodes.push(code);
+            } else {
+                alert("Invalid Promo Code!");
+                discountRate = 0;
+                discountLabel.style.display = "none";
+            }
+            calculateTotal();
+        }
+
+        function calculateTotal() {
+            let selects = document.querySelectorAll('.tour-select');
+            let total = 0;
+
+            selects.forEach(select => {
+                let days = parseInt(select.value) || 0;
+                let price = parseInt(select.getAttribute(`data-${currentCar}`));
+                total += days * price;
+            });
+
+            if (discountRate > 0) {
+                total = total - (total * discountRate);
+            }
+
+            document.getElementById('totalPriceDisplay').innerText = '$' + Math.round(total);
+            document.getElementById('hiddenTotalPrice').value = '$' + Math.round(total);
+        }
+
+        window.onload = function() {
+            calculateTotal();
+        }
+    </script>
+
+</body>
+                      </html>
+                      
